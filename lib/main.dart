@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,7 +56,23 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final storage = FlutterSecureStorage();
   int _counter = 0;
+
+  @override
+  void initState() {
+    _loadData().then((value) {
+      setState(() {
+        _counter = value;
+      });
+    });
+    super.initState();
+  }
+
+  Future<int> _loadData() async {
+    String? value = await storage.read(key: "data");
+    return value != null ? int.parse(value) : 0;
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -112,6 +129,11 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            ElevatedButton(
+                onPressed: () async {
+                  await storage.write(key: "data", value: _counter.toString());
+                },
+                child: Text("Save data"))
           ],
         ),
       ),
