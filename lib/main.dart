@@ -1,5 +1,6 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -56,7 +57,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final storage = FlutterSecureStorage();
+  final Storage _localStorage = window.localStorage;
+
   int _counter = 0;
 
   @override
@@ -70,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<int> _loadData() async {
-    String? value = await storage.read(key: "data");
+    String? value = _localStorage["data"];
     return value != null ? int.parse(value) : 0;
   }
 
@@ -131,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             ElevatedButton(
                 onPressed: () async {
-                  await storage.write(key: "data", value: _counter.toString());
+                  _localStorage["data"] = _counter.toString();
                 },
                 child: Text("Save data"))
           ],
